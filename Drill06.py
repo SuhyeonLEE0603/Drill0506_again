@@ -1,5 +1,4 @@
 from pico2d import *
-import random
 
 TUK_WIDTH, TUK_HEIGHT = 1280, 1024
 
@@ -16,6 +15,7 @@ def load_resources():
 def handle_events():
     global running
     global mx, my
+    global points
 
     events = get_events()
     for event in events:
@@ -23,8 +23,11 @@ def handle_events():
             running = False
         elif event.type == SDL_MOUSEMOTION:
             mx, my = event.x, TUK_HEIGHT - 1 - event.y
+        elif event.type == SDL_MOUSEBUTTONDOWN and event.button == SDL_BUTTON_LEFT: # 마우스 클릭이 있으면
+            points.append((event.x, TUK_HEIGHT - 1 - event.y))  # 클릭된 위치를 새로운 점으로 추가
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             running = False
+
     pass
 
 
@@ -40,7 +43,7 @@ def reset_world():
     frame = 0
     action = 3
 
-    points = [(100, 900), (1200, 800), (500, 100)]
+    points = []
     set_new_target_arrow()
 
 
@@ -52,7 +55,6 @@ def set_new_target_arrow():
 
     if points:  # points 리스트 안에 남아있는 점이 있으면
         sx, sy = cx, cy  # p1 : 시작점
-        # hx, hy = 50, 50
         hx, hy = points[0]  # p2 : 끝점
         t = 0.0
         action = 1 if sx < hx else 0
